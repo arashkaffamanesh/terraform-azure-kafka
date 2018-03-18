@@ -1,0 +1,80 @@
+#!/bin/bash -e
+
+envfile="${1:-.env}"
+test -r ${envfile} || touch ${envfile}
+
+value=$(cat ${envfile} | grep ^ARM_SUBSCRIPTION_ID | cut -d"=" -f2)
+read -p "ARM_SUBSCRIPTION_ID [${value}]: " xvalue
+export ARM_SUBSCRIPTION_ID="${xvalue:-$value}"
+
+value=$(cat ${envfile} | grep ^ARM_CLIENT_ID | cut -d"=" -f2)
+read -p "ARM_CLIENT_ID [${value}]: " xvalue
+export ARM_CLIENT_ID="${xvalue:-$value}"
+
+value=$(cat ${envfile} | grep ^ARM_CLIENT_SECRET | cut -d"=" -f2)
+read -p "ARM_CLIENT_SECRET [${value}]: " xvalue
+export ARM_CLIENT_SECRET="${xvalue:-$value}"
+
+value=$(cat ${envfile} | grep ^ARM_TENANT_ID | cut -d"=" -f2)
+read -p "ARM_TENANT_ID [${value}]: " xvalue
+export ARM_TENANT_ID="${xvalue:-$value}"
+
+value=$(cat ${envfile} | grep ^KCD_VNET_RESOURCE_GROUP_NAME | cut -d"=" -f2)
+read -p "KCD_VNET_RESOURCE_GROUP_NAME [${value}]: " xvalue
+export KCD_VNET_RESOURCE_GROUP_NAME="${xvalue:-$value}"
+
+value=$(cat ${envfile} | grep ^KCD_VNET_NAME | cut -d"=" -f2)
+read -p "KCD_VNET_NAME [${value}]: " xvalue
+export KCD_VNET_NAME="${xvalue:-$value}"
+
+value=$(cat ${envfile} | grep ^KCD_NAME | cut -d"=" -f2)
+read -p "KCD_NAME [${value}]: " xvalue
+export KCD_NAME="${xvalue:-$value}"
+
+value=$(cat ${envfile} | grep ^KCD_IMAGE_VERSION | cut -d"=" -f2)
+read -p "KCD_IMAGE_VERSION [${value}]: " xvalue
+export KCD_IMAGE_VERSION="${xvalue:-$value}"
+
+value=$(cat ${envfile} | grep ^KCD_LOCATION | cut -d"=" -f2)
+read -p "KCD_LOCATION [${value}]: " xvalue
+export KCD_LOCATION="${xvalue:-$value}"
+
+value=$(cat ${envfile} | grep ^KCD_SUBNET_ID | cut -d"=" -f2)
+read -p "KCD_SUBNET_ID [${value}]: " xvalue
+export KCD_SUBNET_ID="${xvalue:-$value}"
+
+value=$(cat ${envfile} | grep ^KCD_SSH_PUB_KEY_FILE | cut -d"=" -f2)
+read -p "KCD_SSH_PUB_KEY_FILE [${value}]: " xvalue
+export KCD_SSH_PUB_KEY_FILE="${xvalue:-$value}"
+
+value=$(cat ${envfile} | grep ^KCD_ZOOKEEPER_QUORUM | cut -d"=" -f2)
+read -p "KCD_ZOOKEEPER_QUORUM [${value}]: " xvalue
+export KCD_ZOOKEEPER_QUORUM="${xvalue:-$value}"
+
+cat << VARS > ${envfile}
+ARM_SUBSCRIPTION_ID=${ARM_SUBSCRIPTION_ID}
+ARM_CLIENT_ID=${ARM_CLIENT_ID}
+ARM_CLIENT_SECRET=${ARM_CLIENT_SECRET}
+ARM_TENANT_ID=${ARM_TENANT_ID}
+KCD_VNET_RESOURCE_GROUP_NAME=${KCD_VNET_RESOURCE_GROUP_NAME}
+KCD_VNET_NAME=${KCD_VNET_NAME}
+KCD_NAME=${KCD_NAME}
+KCD_IMAGE_VERSION=${KCD_IMAGE_VERSION}
+KCD_LOCATION=${KCD_LOCATION}
+KCD_SUBNET_ID=${KCD_SUBNET_ID}
+KCD_SSH_PUB_KEY_FILE=${KCD_SSH_PUB_KEY_FILE}
+KCD_ZOOKEEPER_QUORUM=${KCD_ZOOKEEPER_QUORUM}
+VARS
+
+export KCD_IMAGE_RESOURCE_GROUP=${KCD_NAME}
+export KCD_IMAGE_LOCATION=${KCD_LOCATION}
+export KCD_IMAGE_NAME="${KCD_NAME}-${KCD_IMAGE_VERSION}"
+export TF_VAR_name=${KCD_NAME}
+export TF_VAR_vnet_name=${KCD_VNET_NAME}
+export TF_VAR_vnet_resource_group_name=${KCD_VNET_RESOURCE_GROUP_NAME}
+export TF_VAR_subnet_id=${KCD_SUBNET_ID}
+export TF_VAR_image_name=${KCD_IMAGE_NAME}
+export TF_VAR_ssh_pub_key_file=${KCD_SSH_PUB_KEY_FILE}
+export TF_VAR_zookeeper_quorum=${KCD_ZOOKEEPER_QUORUM}
+
+unset envfile value xvalue
