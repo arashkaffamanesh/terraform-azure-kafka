@@ -22,10 +22,17 @@ resource "azurerm_route_table" "kafka" {
   }
 }
 
+resource "azurerm_network_security_group" "kafka" {
+  name                = "${var.name}-nsg"
+  location            = "${local.location}"
+  resource_group_name = "${azurerm_resource_group.kafka.name}"
+}
+
 resource "azurerm_subnet" "kafka" {
-  name                 = "${var.name}"
-  resource_group_name  = "${var.vnet_resource_group_name}"
-  virtual_network_name = "${var.vnet_name}"
-  address_prefix       = "${local.subnet_address_prefix}"
-  route_table_id       = "${azurerm_route_table.kafka.id}"
+  name                      = "${var.name}"
+  resource_group_name       = "${var.vnet_resource_group_name}"
+  virtual_network_name      = "${var.vnet_name}"
+  address_prefix            = "${local.subnet_address_prefix}"
+  route_table_id            = "${azurerm_route_table.kafka.id}"
+  network_security_group_id = "${azurerm_network_security_group.kafka.id}"
 }
