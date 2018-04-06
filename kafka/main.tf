@@ -1,14 +1,14 @@
 resource "azurerm_availability_set" "zookeeper" {
   location            = "${local.location}"
   name                = "zookeeper"
-  resource_group_name = "${local.resource_group_name}"
+  resource_group_name = "${local.resource_group}"
 }
 
 resource "azurerm_network_interface" "zookeeper" {
   count               = "${local.zookeeper_quorum}"
   name                = "${format("zookeeper-%03d-nic", count.index+1)}"
   location            = "${local.location}"
-  resource_group_name = "${local.resource_group_name}"
+  resource_group_name = "${local.resource_group}"
 
   ip_configuration {
     name                          = "zookeeper-ip-config"
@@ -22,7 +22,7 @@ resource "azurerm_virtual_machine" "zookeeper" {
   count                 = "${local.zookeeper_quorum}"
   name                  = "${format("zookeeper-%03d-vm", count.index+1)}"
   location              = "${local.location}"
-  resource_group_name   = "${local.resource_group_name}"
+  resource_group_name   = "${local.resource_group}"
   network_interface_ids = ["${element(azurerm_network_interface.zookeeper.*.id, count.index)}"]
   vm_size               = "Standard_DS1_v2"
 

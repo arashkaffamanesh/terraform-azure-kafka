@@ -1,0 +1,74 @@
+#!/bin/bash
+
+set -o errexit
+set -o nounset
+
+configfile="${1:-config}"
+test -r ${configfile} || touch ${configfile}
+
+function readConfig() {
+    local varName=$1
+    local defaultValue=${2:-""}
+    local fileValue=$(cat ${configfile} | grep ^"export ${varName}" | cut -d"=" -f2 | tr -d '"')
+    local suggestedValue="${fileValue:-${defaultValue}}"
+    local readValue
+    read -p "${varName}[${suggestedValue}]: " readValue
+    echo "${readValue:-$suggestedValue}"
+}
+
+arm_subscription_id=$(readConfig "ARM_SUBSCRIPTION_ID")
+arm_client_id=$(readConfig "ARM_CLIENT_ID")
+arm_client_secret=$(readConfig "ARM_CLIENT_SECRET")
+arm_tenant_id=$(readConfig "ARM_TENANT_ID")
+
+vnet_resource_group=$(readConfig "VNET_RESOURCE_GROUP")
+vnet_name=$(readConfig "VNET_NAME")
+vnet_gateway=$(readConfig "VNET_GATEWAY")
+
+image_name=$(readConfig "IMAGE_NAME")
+image_resource_group=$(readConfig "IMAGE_RESOURCE_GROUP")
+
+kafka_subnet_id=$(readConfig "KAFKA_SUBNET_ID")
+kafka_ssh_pub_key_file=$(readConfig "KAFKA_SSH_PUB_KEY_FILE")
+kafka_deploy_name=$(readConfig "KAFKA_DEPLOY_NAME")
+
+zookeeper_quorum=$(readConfig "ZOOKEEPER_QUORUM")
+
+
+cat << VARS > ${configfile}
+##########
+# config #
+##########
+export ARM_SUBSCRIPTION_ID="${arm_subscription_id}"
+export ARM_CLIENT_ID="${arm_client_id}"
+export ARM_CLIENT_SECRET="${arm_client_secret}"
+export ARM_TENANT_ID="${arm_tenant_id}"
+
+export VNET_RESOURCE_GROUP="${vnet_resource_group}"
+export VNET_NAME="${vnet_name}"
+export VNET_GATEWAY="${vnet_gateway}"
+
+export IMAGE_NAME="${image_name}"
+export IMAGE_RESOURCE_GROUP="${image_resource_group}"
+
+export KAFKA_SUBNET_ID="${kafka_subnet_id}"
+export KAFKA_SSH_PUB_KEY_FILE="${kafka_ssh_pub_key_file}"
+export KAFKA_DEPLOY_NAME="${kafka_deploy_name}"
+
+export ZOOKEEPER_QUORUM="${zookeeper_quorum}"
+
+#############
+# terraform #
+#############
+export TF_VAR_vnet_resource_group="${vnet_resource_group}"
+export TF_VAR_vnet_name="${vnet_name}"
+export TF_VAR_vnet_gateway="${vnet_gateway}"
+
+export TF_VAR_subnet_id="${kafka_subnet_id}"
+export TF_VAR_ssh_pub_key_file="${kafka_ssh_pub_key_file}"
+export TF_VAR_name="${kafka_deploy_name}"
+export TF_VAR_image_name="${image_name}"
+export TF_VAR_image_resource_group="${image_resource_group}"
+
+export TF_VAR_zookeeper_quorum="${zookeeper_quorum}"
+VARS
