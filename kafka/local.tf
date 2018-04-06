@@ -10,6 +10,7 @@ locals {
   vnet_name                = "${var.vnet_name}"
   image_name               = "${var.image_name}"
   name                     = "${var.name}"
+  image_resource_group = "${var.image_resource_group}"
 
   image_id = "${data.azurerm_image.kafka.id}"
 }
