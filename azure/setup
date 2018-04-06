@@ -16,7 +16,7 @@ function readConfig() {
     echo "${readValue:-$suggestedValue}"
 }
 
-# azure credentians
+# azure credentials
 arm_subscription_id=$(readConfig "ARM_SUBSCRIPTION_ID")
 arm_client_id=$(readConfig "ARM_CLIENT_ID")
 arm_client_secret=$(readConfig "ARM_CLIENT_SECRET")
