@@ -9,9 +9,23 @@ resource "azurerm_resource_group" "kafka" {
   location = "${local.location}"
 }
 
+resource "azurerm_route_table" "kafka" {
+  name                = "${var.name}-rt"
+  location            = "${local.location}"
+  resource_group_name = "${azurerm_resource_group.kafka.name}"
+
+  route {
+    name                   = "default"
+    address_prefix         = "${local.subnet_address_prefix}"
+    next_hop_type          = "VirtualAppliance"
+    next_hop_in_ip_address = "${var.vnet_gateway}"
+  }
+}
+
 resource "azurerm_subnet" "kafka" {
   name                 = "${var.name}"
   resource_group_name  = "${var.vnet_resource_group_name}"
   virtual_network_name = "${var.vnet_name}"
   address_prefix       = "${local.subnet_address_prefix}"
+  route_table_id       = "${azurerm_route_table.kafka.id}"
 }
