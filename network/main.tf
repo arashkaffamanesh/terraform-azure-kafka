@@ -22,7 +22,7 @@ resource "azurerm_route_table" "kafka" {
 
   route {
     name                   = "${local.name}-route"
-    address_prefix         = "${local.subnet}"
+    address_prefix         = "0.0.0.0/0"
     next_hop_type          = "VirtualAppliance"
     next_hop_in_ip_address = "${local.vnet_gateway}"
   }
